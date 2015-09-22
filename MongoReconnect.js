@@ -1,13 +1,3 @@
-# MongoDB Reconnect
-
-This is a demo repository which shows how to reconnect with MongoDB Server with NodeJS.
-
-**MongooseJS** has awesome `event handling`. With the help of `disconnect` event, we will get know that connection has 
-broken with **MongoDB Server** so we can try to reconnect with **MongoDB**. Below is the sample/demo app, which will try
-to reconnect with(Here we capture **MongoDB** `disconnect` event and try to reconnect with) **MongoDB**. And as soon as
-MongoDB Server will up again, it will automatically connect to **MongoDB** without restarting the **NodeJS** Server.
-
-```JavaScript
 /**
  * Created by Amit Thakkar on 9/21/15.
  */
@@ -17,8 +7,8 @@ MongoDB Server will up again, it will automatically connect to **MongoDB** witho
     var mongoURL = 'mongodb://localhost/test';
     var db;
     var reconnectTimeout = 5000;
-    var connectWithRetry = function(cb) {
-        mongoose.connect(mongoURL, function(error) {
+    var connectWithRetry = function (cb) {
+        mongoose.connect(mongoURL, function (error) {
             if (error) {
                 db.close();
                 console.error('Failed to connect to MongoDB on startup', error);
@@ -29,7 +19,7 @@ MongoDB Server will up again, it will automatically connect to **MongoDB** witho
         db = mongoose.connection;
         cb && cb();
     };
-    connectWithRetry(function() {
+    connectWithRetry(function () {
         db.on('error', function (error) {
             console.error('Mongoose Error: ', error);
         });
@@ -45,6 +35,3 @@ MongoDB Server will up again, it will automatically connect to **MongoDB** witho
         });
     });
 })(require);
-```
-
-> Reconnect interval is 5sec here.

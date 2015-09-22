@@ -1,0 +1,32 @@
+{
+  "name": "mongo-reconnect",
+  "version": "0.0.1",
+  "description": "This is a demo repository which shows how to reconnect with MongoDB Server with NodeJS.",
+  "main": "MongoReconnect.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AmitThakkar/mongo-reconnect.git"
+  },
+  "keywords": [
+    "MongoDB",
+    "Mongo",
+    "Mongoose",
+    "MongooseJS",
+    "Node",
+    "NodeJS",
+    "Reconnect",
+    "Restart"
+  ],
+  "author": "Amit Thakkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AmitThakkar/mongo-reconnect/issues"
+  },
+  "homepage": "https://github.com/AmitThakkar/mongo-reconnect#readme",
+  "dependencies": {
+    "mongoose": "^4.1.8"
+  }
+}

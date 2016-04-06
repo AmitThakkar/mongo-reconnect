@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Mongo-reconnect by AmitThakkar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Mongo-reconnect</h1>
+      <h2 class="project-tagline">This is a demo repository which shows how to reconnect with MongoDB Server with NodeJS.</h2>
+      <a href="https://github.com/AmitThakkar/mongo-reconnect" class="btn">View on GitHub</a>
+      <a href="https://github.com/AmitThakkar/mongo-reconnect/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/AmitThakkar/mongo-reconnect/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="mongodb-reconnect" class="anchor" href="#mongodb-reconnect" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MongoDB Reconnect</h1>
+
+<p>This is a demo repository which shows how to reconnect with MongoDB Server with NodeJS.</p>
+
+<p><strong>MongooseJS</strong> has awesome <code>event handling</code>. With the help of <code>disconnect</code> event, we will get know that connection has 
+broken with <strong>MongoDB Server</strong> so we can try to reconnect with <strong>MongoDB</strong>. Below is the sample/demo app, which will try
+to reconnect with(Here we capture <strong>MongoDB</strong> <code>disconnect</code> event and try to reconnect with) <strong>MongoDB</strong>. And as soon as
+MongoDB Server will up again, it will automatically connect to <strong>MongoDB</strong> without restarting the <strong>NodeJS</strong> Server.</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">/**</span>
+<span class="pl-c"> * Created by Amit Thakkar on 9/21/15.</span>
+<span class="pl-c"> */</span>
+(<span class="pl-k">function</span> (<span class="pl-smi">require</span>) {
+    <span class="pl-s"><span class="pl-pds">'</span>use strict<span class="pl-pds">'</span></span>;
+    <span class="pl-k">var</span> mongoose <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>mongoose<span class="pl-pds">'</span></span>);
+    <span class="pl-k">var</span> mongoURL <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>mongodb://localhost/test<span class="pl-pds">'</span></span>;
+    <span class="pl-k">var</span> db;
+    <span class="pl-k">var</span> reconnectTimeout <span class="pl-k">=</span> <span class="pl-c1">5000</span>;
+    <span class="pl-k">var</span> <span class="pl-en">connectWithRetry</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">cb</span>) {
+        <span class="pl-smi">mongoose</span>.<span class="pl-en">connect</span>(mongoURL, <span class="pl-k">function</span>(<span class="pl-smi">error</span>) {
+            <span class="pl-k">if</span> (error) {
+                <span class="pl-smi">db</span>.<span class="pl-c1">close</span>();
+                <span class="pl-en">console</span>.<span class="pl-c1">error</span>(<span class="pl-s"><span class="pl-pds">'</span>Failed to connect to MongoDB on startup<span class="pl-pds">'</span></span>, error);
+            } <span class="pl-k">else</span> {
+                <span class="pl-en">console</span>.<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">'</span>Connected with MongoDB Server<span class="pl-pds">'</span></span>);
+            }
+        });
+        db <span class="pl-k">=</span> <span class="pl-smi">mongoose</span>.<span class="pl-smi">connection</span>;
+        cb <span class="pl-k">&amp;&amp;</span> <span class="pl-en">cb</span>();
+    };
+    <span class="pl-en">connectWithRetry</span>(<span class="pl-k">function</span>() {
+        <span class="pl-smi">db</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>error<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">error</span>) {
+            <span class="pl-en">console</span>.<span class="pl-c1">error</span>(<span class="pl-s"><span class="pl-pds">'</span>Mongoose Error: <span class="pl-pds">'</span></span>, error);
+        });
+        <span class="pl-smi">db</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>connected<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> () {
+            <span class="pl-en">console</span>.<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">'</span>Mongoose Connected to <span class="pl-pds">'</span></span>, mongoURL);
+        });
+        <span class="pl-smi">db</span>.<span class="pl-en">once</span>(<span class="pl-s"><span class="pl-pds">'</span>open<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> () {
+            <span class="pl-en">console</span>.<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">'</span>Mongoose Connection Open with MongoDB Server on <span class="pl-pds">'</span></span>, mongoURL);
+        });
+        <span class="pl-smi">db</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>disconnected<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> () {
+            <span class="pl-en">console</span>.<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">'</span>Mongoose connection disconnected<span class="pl-pds">'</span></span>);
+            <span class="pl-c1">setTimeout</span>(connectWithRetry, reconnectTimeout);
+        });
+    });
+})(require);</pre></div>
+
+<blockquote>
+<p>Reconnect interval is 5sec here.</p>
+</blockquote>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/AmitThakkar/mongo-reconnect">Mongo-reconnect</a> is maintained by <a href="https://github.com/AmitThakkar">AmitThakkar</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>

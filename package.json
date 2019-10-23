@@ -27,6 +27,6 @@
   },
   "homepage": "https://github.com/AmitThakkar/mongo-reconnect#readme",
   "dependencies": {
-    "mongoose": "^4.1.8"
+    "mongoose": "^5.7.6"
   }
 }
